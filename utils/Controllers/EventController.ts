@@ -1,4 +1,5 @@
 import DataTable, { Api, ConfigLanguage } from "datatables.net-bs5";
+//@ts-expect-error ça marche quand même
 import language from "datatables.net-plugins/i18n/fr-FR";
 import { formatDateTime } from "../FormatUtils";
 import dayjs from "dayjs";

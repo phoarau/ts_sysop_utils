@@ -8,14 +8,17 @@ export class CollapsableRowgroup<T> {
     collapsedGroups: Map<number, Map<string, boolean>>;
     defaultCollapsedGroups: boolean = true;
     groupTitleColspan: number;
-    groupRender: ((tr: JQuery<HTMLElement>, rows, level: number | undefined) => JQuery<HTMLElement>) | null = null;
+    groupRender: ((tr: JQuery<HTMLElement>, rows: Api<T>, level: number | undefined) => JQuery<HTMLElement>) | null =
+        null;
     simpleCollapse?: boolean;
 
     constructor(
         dataSrc: RowGroupDataSource<T>,
         defaultCollapsedGroups: boolean = true,
         groupTitleColspan: number = 20,
-        groupRender: ((tr: JQuery<HTMLElement>, rows, level: number | undefined) => JQuery<HTMLElement>) | null = null,
+        groupRender:
+            | ((tr: JQuery<HTMLElement>, rows: Api<T>, level: number | undefined) => JQuery<HTMLElement>)
+            | null = null,
         simpleCollapse: boolean = false,
     ) {
         this.dataSrc = dataSrc;
@@ -29,7 +32,7 @@ export class CollapsableRowgroup<T> {
     getRowGroup() {
         const configRowGroup = {
             dataSrc: this.dataSrc,
-            startRender: (rows, group, level) => {
+            startRender: (rows: Api<T>, group: string, level: number) => {
                 const gp = level + "_" + group;
 
                 const collapsed =
@@ -45,7 +48,8 @@ export class CollapsableRowgroup<T> {
 
                 if (level == this.dataSrc.length - 1) {
                     // C'est le dernier niveau, on gère l'affichage les lignes
-                    rows.nodes().each(function (r) {
+                    //@ts-expect-error ça marche quand même, c'est datatables
+                    rows.nodes().each((r) => {
                         r.style.display = collapsed ? "none" : "";
                     });
                 }
@@ -76,7 +80,8 @@ export class CollapsableRowgroup<T> {
 
                     if (collapsedParent) {
                         // C'est le dernier niveau, on gère l'affichage les lignes
-                        rows.nodes().each(function (r) {
+                        //@ts-expect-error ça marche quand même, c'est datatables
+                        rows.nodes().each((r) => {
                             r.style.display = "none";
                         });
                     }
@@ -89,18 +94,20 @@ export class CollapsableRowgroup<T> {
         return configRowGroup;
     }
 
-    getRowParentGroup(level, data0) {
-        if (typeof this.dataSrc[level - 1] == "function") {
-            return level - 1 + "_" + this.dataSrc[level - 1](data0);
+    getRowParentGroup(level: number, data0: T) {
+        if (typeof this.dataSrc[(level - 1) as keyof RowGroupDataSource<T>] === "function") {
+            return (
+                level - 1 + "_" + (this.dataSrc[(level - 1) as keyof RowGroupDataSource<T>] as (d: T) => string)(data0)
+            );
         }
 
-        const path = this.dataSrc[level - 1].split(".");
+        const path = (this.dataSrc[(level - 1) as keyof RowGroupDataSource<T>] as string).split(".");
 
         path.forEach((p) => {
-            if (data0[p] === undefined) {
+            if (data0[p as keyof RowGroupDataSource<T>] === undefined) {
                 return "";
             }
-            data0 = data0[p];
+            data0 = data0[p as keyof RowGroupDataSource<T>];
         });
         return level - 1 + "_" + data0;
     }

@@ -26,10 +26,10 @@ export abstract class TreeAjaxController<
     modalId: string;
     modal: Modal;
     node: Fancytree.FancytreeNode | null = null;
-    _node_move_start: Fancytree.FancytreeNode;
-    _node_move_start_index: number;
-    _node_move_end: Fancytree.FancytreeNode;
-    _node_move_end_index: number;
+    _node_move_start: Fancytree.FancytreeNode | undefined;
+    _node_move_start_index: number | undefined;
+    _node_move_end: Fancytree.FancytreeNode | undefined;
+    _node_move_end_index: number | undefined;
     renderColumns?: (event: JQueryEventObject, data: Fancytree.EventData) => void;
 
     public CLIPBOARD: { mode: string; data: T } | null = null;
@@ -337,7 +337,7 @@ export abstract class TreeAjaxController<
                     this._node_move_end_index = this._node_move_end.getIndex();
                     let offset = 0;
 
-                    if (this._node_move_end.parent != this._node_move_start.parent) {
+                    if (this._node_move_end.parent != this._node_move_start?.parent) {
                         offset =
                             this._node_move_end.getIndex() -
                             this._node_move_end.parent.children.length +
@@ -345,20 +345,20 @@ export abstract class TreeAjaxController<
                     } else {
                         switch (data.hitMode) {
                             case "after":
-                                offset = this._node_move_start_index - this._node_move_end_index - 1;
+                                offset = (this._node_move_start_index ?? 0) - this._node_move_end_index - 1;
                                 break;
                             case "before":
-                                offset = this._node_move_start_index - this._node_move_end_index + 1;
+                                offset = (this._node_move_start_index ?? 0) - this._node_move_end_index + 1;
                                 break;
                         }
                     }
 
-                    const startItem = this.getItemFromNode(this._node_move_start);
+                    const startItem = this.getItemFromNode(this._node_move_start ?? null);
                     const endItem = this.getItemFromNode(this._node_move_end);
 
                     if (startItem && endItem) {
                         this.move(Number(startItem.id), Number(endItem.id), data.hitMode, offset);
-                        this._node_move_start.parent.setExpanded();
+                        this._node_move_start?.parent.setExpanded();
                     }
                     return true;
                 },

@@ -12,7 +12,7 @@ export async function getAuthenticatedUser<User>() {
 // declare const csrfToken: string;
 
 export function getCsrfToken() {
-    return window["csrfToken"];
+    return window["csrfToken" as keyof Window] as string;
 }
 
 export async function userIsAllowedTo(

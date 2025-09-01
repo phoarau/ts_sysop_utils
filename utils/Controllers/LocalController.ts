@@ -4,7 +4,7 @@ import { BaseController } from "./BaseController";
  * TODO: Réfléchir au moyen de ne pas avoir la fonction delete pour certains controllers
  */
 export abstract class LocalController<T, F> extends BaseController<T> {
-    parentItem: F | null;
+    parentItem: F | null = null;
     hidden_field_container_id: string;
     selected_row: number = -1;
     rows: T[] = [];

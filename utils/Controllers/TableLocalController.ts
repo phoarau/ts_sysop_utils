@@ -5,7 +5,7 @@ import { LocalController } from "./LocalController";
 type Props<T> = { hidden_field_container_id: string; formId: string; modalId: string; table: Api<T> };
 
 export abstract class TableLocalController<T, F> extends LocalController<T, F> {
-    item: T | null;
+    item: T | null | undefined;
     table: Api<T>;
     modalId: string;
     modal: Modal;

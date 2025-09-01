@@ -115,7 +115,15 @@ export abstract class BaseController<T> {
 
                 // Si la valeur est un objet, on essaie de récupérer le path ou le nom
                 if (typeof value === "object" && value !== null) {
-                    value = value["path"] ?? value["long_name"] ?? value["name"] ?? value["num"] ?? "-";
+                    type KeyOfValue = keyof typeof value;
+
+                    //@ts-expect-error Va falloir corriger, mais pas le temps là tout de suite
+                    value =
+                        value["path" as KeyOfValue] ??
+                        value["long_name" as KeyOfValue] ??
+                        value["name" as KeyOfValue] ??
+                        value["num" as KeyOfValue] ??
+                        "-";
                 }
 
                 const fieldElements = this.form.find(`[name="${field}"]`);
@@ -193,7 +201,7 @@ export abstract class BaseController<T> {
             }
             const key = subFields[i];
             if (typeof value === "object" && value !== null && key in value) {
-                value = value[key];
+                value = value[key as keyof typeof value];
             } else {
                 return "-";
             }

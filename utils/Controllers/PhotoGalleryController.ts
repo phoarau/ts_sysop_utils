@@ -64,7 +64,14 @@ export class PhotoGalleryController {
                           },
                           ondata: (formData) => {
                               Object.entries(this.extraData).forEach(([key, value]) => {
-                                  formData.append(key, value?.toString());
+                                  const realValue =
+                                      typeof value === "string"
+                                          ? value
+                                          : "toString" in (value as object) &&
+                                              typeof (value as object).toString === "function"
+                                            ? (value as object).toString()
+                                            : "";
+                                  formData.append(key, realValue);
                               });
                               return formData;
                           },

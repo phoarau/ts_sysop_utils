@@ -22,9 +22,9 @@ export abstract class CsvImportController<
     public imported_datas: {
         headers: Record<string, string>;
         datas: Record<string, string>[];
-    };
-    public imported_analyse: Record<string, boolean>[];
-    public computed_datas: Record<string, unknown>[];
+    } = { headers: {}, datas: [] };
+    public imported_analyse: Record<string, boolean>[] = [];
+    public computed_datas: Record<string, unknown>[] = [];
 
     public uploader: filepond.FilePond | null;
 
@@ -132,7 +132,7 @@ export abstract class CsvImportController<
         const rows: Record<string, unknown>[] = [];
 
         $.each(this.imported_datas.datas, (n, data) => {
-            const row = {};
+            const row: Record<string, unknown> = {};
             $.each(this.selectElements, (k, v) => {
                 row[$(v).data("field")] = data[$(v).val()?.toString() ?? ""] ?? "";
             });
@@ -183,7 +183,7 @@ export abstract class CsvImportController<
         }
 
         const isAllRequiredDataMapped = this.requiredFields.every(
-            (field) => this.selectElements.find(`[data-field="${field}"]`).val() !== ""
+            (field) => this.selectElements.find(`[data-field="${field}"]`).val() !== "",
         );
 
         if (!isAllRequiredDataMapped) {

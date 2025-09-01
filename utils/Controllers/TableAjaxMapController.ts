@@ -1,6 +1,6 @@
 import { TableAjaxController } from "./TableAjaxController";
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
-import { GeoJsonObject } from "geojson";
+import { Feature, GeoJsonObject } from "geojson";
 
 export abstract class TableAjaxMapController<
     T extends { id: E },
@@ -82,11 +82,11 @@ export abstract class TableAjaxMapController<
         return "name" in item ? (item.name as string) : "-";
     }
 
-    async buildGeojsons(datas) {
+    async buildGeojsons(datas: (T & { geojson: Feature })[]) {
         const map = await this.map;
 
         this.features = datas.flatMap((item) => {
-            const addedFeatures = map?.data.addGeoJson(item.geojson);
+            const addedFeatures = map?.data.addGeoJson(item.geojson) ?? [];
             // if (addedFeatures) {
             //     this.features.push(...addedFeatures);
             // }
@@ -98,11 +98,13 @@ export abstract class TableAjaxMapController<
     }
 
     async zoom(item: T) {
-        if (this.map) {
+        const itemHasLat = "lat" in item && typeof item.lat === "number";
+        const itemHasLng = "lng" in item && typeof item.lng === "number";
+        if (this.map && itemHasLat && itemHasLng) {
             (await this.map).moveCamera({
                 center: {
-                    lat: item["lat"],
-                    lng: item["lng"],
+                    lat: item.lat as number,
+                    lng: item.lng as number,
                 },
                 zoom: 21,
             });

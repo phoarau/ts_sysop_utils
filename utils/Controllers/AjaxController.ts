@@ -11,7 +11,7 @@ export type AjaxControllerProps = { url: string } & BaseControllerProps;
  */
 export abstract class AjaxController<
     T extends { id: E },
-    E = number | string | null | undefined
+    E = number | string | null | undefined,
 > extends BaseController<T> {
     url: string;
     item: T | null;
@@ -41,7 +41,7 @@ export abstract class AjaxController<
 
     protected getDeleteUrl<E>(
         id: E,
-        { action = "delete", extension = "json" }: { action?: string; extension?: string }
+        { action = "delete", extension = "json" }: { action?: string; extension?: string },
     ) {
         return `${this.url}/${action}/${id}.${extension}`;
     }
@@ -121,7 +121,7 @@ export abstract class AjaxController<
 
     async baseSave<Res = T>(
         data: object,
-        options: { action?: string; extension?: string }
+        options: { action?: string; extension?: string },
     ): Promise<CustomCakeResponse<Res>> {
         const response: CustomCakeResponse<Res> = await $.ajax({
             url: `${this.url}/${options?.action ?? "save"}.${options?.extension ?? "json"}`,
@@ -162,7 +162,7 @@ export abstract class AjaxController<
             onConfirm: (item: T | null | undefined) => unknown;
             action?: string;
             extension?: string;
-        }
+        },
     ): Promise<boolean> {
         if (!id) {
             console.error(`L'ID ${id?.toString()} est invalide`);
@@ -194,7 +194,10 @@ export abstract class AjaxController<
                         Swal.fire("Erreur!", message, "error");
                     }
                 } catch (error) {
-                    const response = error.responseJSON as CakeError;
+                    const response =
+                        typeof error === "object" && error != null && "responseJSON" in error
+                            ? (error?.responseJSON as CakeError)
+                            : null;
                     if (response?.message) {
                         Swal.fire("Impossible de supprimer", response.message, "error");
                     } else {
