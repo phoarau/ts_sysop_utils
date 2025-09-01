@@ -1,11 +1,13 @@
 {
   "compilerOptions": {
     "outDir": "dist",
+    "target": "ES6",
     "module": "commonjs",
+    "declaration": true,
+    "strict": true,
     "experimentalDecorators": true,
     "useDefineForClassFields": false,
     "esModuleInterop": true,
-    "target": "ES6"
   },
   "include": ["index.ts"],
   "exclude": ["node_modules", "dist"]
