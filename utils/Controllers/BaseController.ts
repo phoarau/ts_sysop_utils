@@ -1,23 +1,11 @@
 import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
+import utc from "dayjs/plugin/utc.js";
 import "jquery-validation";
-import Swal, { SweetAlertIcon } from "sweetalert2";
-import { getAuthenticatedUser } from "../AuthUtils";
+import Swal from "sweetalert2";
+import { getAuthenticatedUser } from "../AuthUtils.js";
+import { ConfirmProps } from "../swalUtils.js";
 
 dayjs.extend(utc);
-
-export type ConfirmProps<T = unknown> = {
-    /** Titre de la boîte de dialogue */
-    title: string;
-    /** Contenu/message de la boîte de dialogue */
-    content: string;
-    icon: SweetAlertIcon;
-    cancelButtonText?: string;
-    confirmButtonText: string;
-    confirmButtonColor: string;
-    /** Fonction à exécuter lors de la confirmation */
-    onConfirm: (item: T) => unknown;
-};
 
 /**
  * Propriétés pour la boîte de dialogue de confirmation de suppression.
