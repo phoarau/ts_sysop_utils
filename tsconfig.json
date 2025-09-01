@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+    "module": "es6",
+    "experimentalDecorators": true,
+    "useDefineForClassFields": false,
+    "esModuleInterop": true,
+    "target": "ES6"
+  },
+  "include": ["index.ts"],
+  "exclude": ["node_modules", "dist"]
+}

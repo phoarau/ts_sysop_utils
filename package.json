@@ -1,0 +1,64 @@
+{
+  "name": "ts_sysop_utils",
+  "version": "1.0.0",
+  "description": "Les utilitaires dont nous avons besoin pour accélérer nos développements.",
+  "homepage": "https://github.com/phoarau/ts_sysop_utils#readme",
+  "bugs": {
+    "url": "https://github.com/phoarau/ts_sysop_utils/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/phoarau/ts_sysop_utils.git"
+  },
+  "license": "ISC",
+  "author": "sysop-gmini",
+  "type": "module",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "dayjs": "^1.11.18",
+    "jquery": "^3.7.1",
+    "sweetalert2": "^11.22.5",
+    "@fancyapps/ui": "^6.0.25",
+    "@googlemaps/js-api-loader": "^1.16.8",
+    "@googlemaps/markerclusterer": "^2.5.3",
+    "bootstrap": "^5.3.3",
+    "datatables.net-bs5": "^2.1.8",
+    "datatables.net-buttons-bs5": "^3.1.2",
+    "datatables.net-dt": "^2.1.8",
+    "datatables.net-fixedheader-bs5": "^4.0.1",
+    "datatables.net-plugins": "^2.1.7",
+    "datatables.net-rowgroup-bs5": "^1.5.0",
+    "datatables.net-select": "^3.0.1",
+    "daterangepicker": "^3.1.0",
+    "filepond": "^4.32.7",
+    "fullcalendar-scheduler": "^6.1.17",
+    "jquery-contextmenu": "^2.9.2",
+    "jquery-validation": "^1.21.0",
+    "jquery.fancytree": "^2.38.3",
+    "js-year-calendar": "^2.0.0",
+    "jszip": "^3.10.1",
+    "notyf": "^3.10.0",
+    "pdfmake": "^0.2.20",
+    "select2": "^4.1.0-rc.0"
+  },
+  "devDependencies": {
+    "@types/bootstrap": "^5.2.10",
+    "@types/daterangepicker": "^3.1.8",
+    "@types/eslint__js": "^8.42.3",
+    "@types/geojson": "^7946.0.14",
+    "@eslint/js": "^9.13.0",
+    "@types/google.maps": "^3.58.1",
+    "@types/jquery.contextmenu": "^1.7.38",
+    "@types/jquery.fancytree": "^0.0.10",
+    "@types/jquery.validation": "^1.16.10",
+    "@types/select2": "^4.0.63",
+    "eslint": "^9.13.0",
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.11.0",
+    "@types/jquery": "^3.5.33"
+  }
+}
