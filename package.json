@@ -1,5 +1,5 @@
 {
-  "name": "ts_sysop_utils",
+  "name": "@sysop-gmini/ts_sysop_utils",
   "version": "1.0.0",
   "description": "Les utilitaires dont nous avons besoin pour accélérer nos développements.",
   "homepage": "https://github.com/phoarau/ts_sysop_utils#readme",
