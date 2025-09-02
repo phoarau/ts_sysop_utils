@@ -22,14 +22,16 @@ export type TableConfig<T, Status> = {
 
 type TablesConfigMap<T, Keys> = Map<Keys, TableConfig<T, Keys>>;
 
+type GeneralDisplayOptions = {
+    titlesDisplayClass?: string;
+    badgeAdditionalClasses?: string;
+};
+
 export type TablesAjaxProps<T, K, ActionName> = {
     tables?: TablesConfigMap<T, K>;
     tabId?: string;
     activeTab: K;
-    generalDisplayOptions?: {
-        titlesDisplayClass?: string;
-        badgeAdditionalClasses?: string;
-    };
+    generalDisplayOptions?: GeneralDisplayOptions;
 } & TableAjaxProps<T, ActionName, K>;
 
 export abstract class TablesAjaxController<
@@ -40,14 +42,16 @@ export abstract class TablesAjaxController<
     tables?: TablesConfigMap<T, TabNames>;
     tabId?: string;
     activeTab: TabNames;
+    private generalDisplayOptions?: GeneralDisplayOptions;
 
-    constructor(private props: TablesAjaxProps<T, TabNames, ActionName> & AjaxControllerProps) {
+    constructor(props: TablesAjaxProps<T, TabNames, ActionName> & AjaxControllerProps) {
         super({ ...props });
 
         this.table = props.table;
         this.tables = props.tables;
         this.tabId = props.tabId;
         this.activeTab = props.activeTab;
+        this.generalDisplayOptions = props.generalDisplayOptions;
     }
 
     protected buildTabs() {
@@ -56,14 +60,12 @@ export abstract class TablesAjaxController<
         navTab.empty();
         this.tables?.forEach((v, k) => {
             const t = $("<span>")
-                .addClass(this.props.generalDisplayOptions?.titlesDisplayClass ?? "display-5")
+                .addClass(this.generalDisplayOptions?.titlesDisplayClass ?? "display-5")
                 .text(v.name);
             if (v.config.badge) {
                 t.append(
                     $("<span>")
-                        .addClass(
-                            `badge ${v.config.badge} ${this.props.generalDisplayOptions?.badgeAdditionalClasses} ms-1`,
-                        )
+                        .addClass(`badge ${v.config.badge} ${this.generalDisplayOptions?.badgeAdditionalClasses} ms-1`)
                         .text(0),
                 );
             }
