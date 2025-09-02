@@ -1,6 +1,6 @@
 {
   "name": "@sysop-gmini/ts_sysop_utils",
-  "version": "1.0.6",
+  "version": "1.0.10",
   "description": "Les utilitaires dont nous avons besoin pour accélérer nos développements.",
   "homepage": "https://github.com/phoarau/ts_sysop_utils#readme",
   "bugs": {
@@ -12,7 +12,6 @@
   },
   "license": "ISC",
   "author": "sysop-gmini",
-  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
