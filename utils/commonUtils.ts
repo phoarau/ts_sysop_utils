@@ -3,7 +3,7 @@ import "notyf/notyf.min.css";
 
 export const pause = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
-let timer;
+let timer: number | undefined;
 export function delay(ms: number) {
     return function (callback: () => void) {
         clearTimeout(timer);
@@ -59,7 +59,7 @@ export function sysopEndLoader(target: string = "body") {
     spinnerMap.delete(target);
 }
 
-export const baseUrl = window["base_url"];
+export const baseUrl = window["base_url" as keyof Window];
 
 export const toaster = new Notyf({
     duration: 5000,

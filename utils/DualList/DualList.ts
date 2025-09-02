@@ -1,6 +1,7 @@
 import { getCsrfToken } from "../AuthUtils";
 import { DualListOptions, ObjectDescription } from "./DualListOptions";
 import { Api, Config } from "datatables.net-bs5";
+//@ts-expect-error tkt c'est datatables
 import language from "datatables.net-plugins/i18n/fr-FR";
 import "datatables.net-rowgroup-bs5";
 
@@ -9,16 +10,16 @@ export class DualList<T> {
     public dataType: "ids" | "object";
     public object?: ObjectDescription<T>[];
     public keepOrder: boolean;
-    public elements: T[];
+    public elements: T[] = [];
     public selectedElements: T[];
     public input: JQuery<HTMLElement>;
     public unselectedTableSearch: string = "";
     public selectedTableSearch: string = "";
-    public hiddenInputsDiv: JQuery<HTMLElement>;
+    public hiddenInputsDiv: JQuery<HTMLElement> | null = null;
     public selectedTable: JQuery<HTMLElement>;
     public unselectedTable: JQuery<HTMLElement>;
-    public unselectedDt: Api<T>;
-    public selectedDt: Api<T>;
+    public unselectedDt!: Api<T>;
+    public selectedDt!: Api<T>;
     public title: string;
     public showMoveAllButtons: boolean;
 
@@ -208,8 +209,9 @@ export class DualList<T> {
         }
         // Configurer les elements
         this.elements.forEach(function (element) {
-            if (!element["_dualList"]) {
-                element["_dualList"] = {};
+            if (!element["_dualList" as keyof typeof element]) {
+                //@ts-expect-error ça marche comment ?
+                element["_dualList" as keyof typeof element] = {};
             }
         });
     }
@@ -419,10 +421,11 @@ export class DualList<T> {
         if (this.dataType === "ids") {
             this.input.val(this.selectedElements.map((e) => this.resolve(e, this.params.fields?.value ?? "value")));
         } else if (this.dataType === "object") {
-            this.hiddenInputsDiv.empty();
+            this.hiddenInputsDiv?.empty();
             const datas = this._buildSelectedInputs();
             datas.forEach((data) => {
-                this.hiddenInputsDiv.append($("<div>").attr("class", "input-group").append(data["built_inputs"]));
+                //@ts-expect-error comment ça marche ?
+                this.hiddenInputsDiv?.append($("<div>").attr("class", "input-group").append(data["built_inputs"]));
             });
             // this.input.outerHTML = $("<div>").
             // this.input.val(this.selectedElements.map((e) => this.resolve(e, this.params.fields?.value ?? "value")));
@@ -501,16 +504,19 @@ export class DualList<T> {
 
         for (let index = 0; index < this.selectedElements.length; index++) {
             const selectedElement: T = this.selectedElements[index];
-            const dualListData = selectedElement["_dualList"];
+            const dualListData = selectedElement["_dualList" as keyof typeof selectedElement];
 
             // if (!dualListData.is_built) {
             const input_datas = this._buildSingleInputData(selectedElement, index);
+            //@ts-expect-error comment ça marche ?
             dualListData.input_datas = input_datas;
+            //@ts-expect-error comment ça marche ?
             dualListData.built_inputs = this._buildInputs(input_datas);
             // dualListData.index = index;
             //     dualListData.is_built = true;
             // }
 
+            //@ts-expect-error comment ça marche ?
             res.push(dualListData);
         }
 

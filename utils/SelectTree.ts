@@ -49,7 +49,7 @@ export class SelectTree {
     /** Si le fancytree s'initialise dans le constructeur */
     auto_init: boolean = true;
     /** L'arbre réel Fancytree */
-    tree: Fancytree.Fancytree;
+    tree: Fancytree.Fancytree | undefined;
 
     constructor({ item_name, tree_selector, tree_options, input, auto_init = true }: SelectTreeProps) {
         this.item_name = item_name;
@@ -89,16 +89,17 @@ export class SelectTree {
      * @param ids liste des ids a selectionner
      */
     selectTreeValues(ids: number[] | null): void {
-        const selected_nodes = this.tree.getSelectedNodes();
+        const selected_nodes = this.tree?.getSelectedNodes() ?? [];
         selected_nodes.forEach((selected_node) => {
             selected_node.setSelected(false);
         });
 
         if (ids) {
             const _item_name = this.item_name;
-            const nodes = this.tree.findAll(function (node) {
-                return ids.includes(node.data[`${_item_name}_id`]);
-            });
+            const nodes =
+                this.tree?.findAll(function (node) {
+                    return ids.includes(node.data[`${_item_name}_id`]);
+                }) ?? [];
             nodes.forEach((node) => {
                 node.setSelected(true);
             });
@@ -106,9 +107,10 @@ export class SelectTree {
     }
 
     #updateInput(): void {
-        const selected_menus = this.tree.findAll((node) => {
-            return node.isSelected() && node.data.type === this.item_name;
-        });
+        const selected_menus =
+            this.tree?.findAll((node) => {
+                return node.isSelected() && node.data.type === this.item_name;
+            }) ?? [];
         const menus_ids = selected_menus.map((node) => node.data[`${this.item_name}_id`]);
         this.input?.val(menus_ids);
     }
