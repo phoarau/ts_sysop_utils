@@ -84,7 +84,21 @@ export class PhotoGalleryController {
             : null;
     }
 
-    build(data: Record<string, unknown>) {
+    build(
+        queryParams: Record<string, unknown>,
+        options?: {
+            /**
+             * Taille en pixels de chaque image (valeur par défaut = `80`)
+             */
+            imageSize?: number;
+            /**
+             * Si le thumbnail n'arrive pas à charger, indique si on doit afficher l'image complète à la place
+             *
+             * valeur par défaut: `false`
+             */
+            useFullImageAsFallback?: boolean;
+        },
+    ) {
         // Build the photo gallery UI
         const galleryContainer = $(this.galleryId);
 
@@ -96,7 +110,7 @@ export class PhotoGalleryController {
                 type: "GET",
                 cache: false,
                 dataType: "json",
-                data,
+                data: queryParams,
                 success: (json) => {
                     const galeriePhoto = /*html*/ `
                 <div class="d-flex flex-row justify-content-start align-items-start flex-wrap">
@@ -111,7 +125,14 @@ export class PhotoGalleryController {
                                         id="bdt-photo-${photo.id}"
                                         data-responsive="${photo.dir}${photo.photo}"
                                         href="/${photo.dir}${photo.photo}">
-                                        <img data-id="${photo.id}" class="mx-2 my-2" width="80px" height="80px;" src="/${photo.dir}thumb.small.${photo.photo}">
+                                        <img
+                                            data-id="${photo.id}"
+                                            class="mx-2 my-2"
+                                            width="${options?.imageSize ?? 80}px"
+                                            height="${options?.imageSize ?? 80}px;"
+                                            src="/${photo.dir}thumb.small.${photo.photo}"
+                                            ${options?.useFullImageAsFallback ? `onerror="this.onerror=null;this.src='/${photo.dir}${photo.photo}'"` : ""}
+                                        >
                                     </a>`;
                             })
                             .join("")}
