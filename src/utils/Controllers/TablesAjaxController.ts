@@ -12,7 +12,7 @@ export type TableConfig<T, Status> = {
     config: {
         data: { status: Status[] } & Record<string, unknown>;
         /**
-         * Classe du badge (pour le bg)
+         * Classe complète du badge (pour le bg par exemple: "bg-primary")
          */
         badge: string | boolean;
         // isVisible?: (field: keyof T) => boolean;
@@ -26,6 +26,10 @@ export type TablesAjaxProps<T, K, ActionName> = {
     tables?: TablesConfigMap<T, K>;
     tabId?: string;
     activeTab: K;
+    generalDisplayOptions?: {
+        titlesDisplayClass?: string;
+        badgeAdditionalClasses?: string;
+    };
 } & TableAjaxProps<T, ActionName, K>;
 
 export abstract class TablesAjaxController<
@@ -37,7 +41,7 @@ export abstract class TablesAjaxController<
     tabId?: string;
     activeTab: TabNames;
 
-    constructor(props: TablesAjaxProps<T, TabNames, ActionName> & AjaxControllerProps) {
+    constructor(private props: TablesAjaxProps<T, TabNames, ActionName> & AjaxControllerProps) {
         super({ ...props });
 
         this.table = props.table;
@@ -51,9 +55,17 @@ export abstract class TablesAjaxController<
         const navTab = $("<nav>").addClass("nav nav-underline").attr("role", "tablist");
         navTab.empty();
         this.tables?.forEach((v, k) => {
-            const t = $("<span>").addClass("display-5").text(v.name);
+            const t = $("<span>")
+                .addClass(this.props.generalDisplayOptions?.titlesDisplayClass ?? "display-5")
+                .text(v.name);
             if (v.config.badge) {
-                t.append($("<span>").addClass(`badge bg-${v.config.badge} ms-1`).text(0));
+                t.append(
+                    $("<span>")
+                        .addClass(
+                            `badge ${v.config.badge} ${this.props.generalDisplayOptions?.badgeAdditionalClasses} ms-1`,
+                        )
+                        .text(0),
+                );
             }
 
             const a = $("<button>")
