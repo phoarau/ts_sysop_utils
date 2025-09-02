@@ -66,6 +66,13 @@ export abstract class TableAjaxController<
         this.actions = actions ?? new Map<ActionName, ActionConfig<ItemStatus, T>>();
     }
 
+    protected resetView(): Promise<void> {
+        if (this.viewModalId) {
+            $(this.viewModalId).find("[view-field]").html("");
+        }
+        return super.resetView();
+    }
+
     async view(id: E) {
         if (!this.viewModalId) {
             console.warn("Modale de vue non définie");
