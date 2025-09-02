@@ -10,11 +10,11 @@ import { getCsrfToken } from "../AuthUtils";
 export class PhotoGalleryController {
     // Controller logic for managing the photo gallery
     galleryId: string;
-    modalId: string;
-    modal: Modal;
+    modalId?: string;
+    modal?: Modal;
     uploader: filepond.FilePond | null;
     extraData: Record<string, unknown>;
-    inputId: string;
+    inputId?: string;
     onUpdate?: () => void;
 
     constructor({
@@ -25,19 +25,19 @@ export class PhotoGalleryController {
         onUpdate,
     }: {
         galleryId: string;
-        modalId: string;
+        modalId?: string;
         extraData: Record<string, unknown>;
-        inputId: string;
+        inputId?: string;
         onUpdate?: () => void;
     }) {
         this.galleryId = galleryId;
         this.modalId = modalId;
-        this.modal = Modal.getOrCreateInstance(this.modalId);
+        this.modal = this.modalId ? Modal.getOrCreateInstance(this.modalId) : undefined;
         this.inputId = inputId;
         this.onUpdate = onUpdate;
         this.extraData = extraData;
 
-        const fileInputElement = document.querySelector(this.inputId);
+        const fileInputElement = this.inputId ? document.querySelector(this.inputId) : undefined;
         this.uploader = fileInputElement
             ? filepond.create(fileInputElement, {
                   credits: false,
@@ -57,7 +57,7 @@ export class PhotoGalleryController {
                           onload: (response) => {
                               const responseObj = JSON.parse(response);
                               if (responseObj.status === 0) {
-                                  this.modal.hide();
+                                  this.modal?.hide();
                                   this.onUpdate?.();
                               }
                               return 0;
