@@ -6,40 +6,63 @@ import "@fancyapps/ui/dist/fancybox/fancybox.css";
 import * as filepond from "filepond";
 import "filepond/dist/filepond.min.css";
 import { getCsrfToken } from "../AuthUtils";
+import { DataTableResponse } from "../Types";
+
+type Props = {
+    /**
+     * ID du container dans lequel afficher la gallerie
+     */
+    galleryId: string;
+    /**
+     * Nom de la gallerie. Permet d'éviter de grouper des photos qui n'ont pas lieu d'être groupées
+     */
+    galleryName?: string;
+    /**
+     * ID de la modale qui permet d'importer une nouvelle photo
+     */
+    modalId?: string;
+    /**
+     * Données supplémentaires qui permettent de filtrer les photos ou alors d'ajouter les bonnes données quand on importe les photos.
+     */
+    extraData: Record<string, unknown>;
+    /**
+     * Champ input qui permet d'upload les photos
+     */
+    inputId?: string;
+    /**
+     * Fonction exécutée après l'upload d'une nouvelle photo
+     * @returns void
+     */
+    onUpdate?: () => void;
+    /**
+     * Le texte à afficher quand il n'y a pas d'image à afficher
+     *
+     * Par défaut chaine de caractère vide
+     */
+    fallbackTemplate?: string;
+};
 
 export class PhotoGalleryController {
     // Controller logic for managing the photo gallery
-    galleryId: string;
-    galleryName?: string;
-    modalId?: string;
-    modal?: Modal;
-    uploader: filepond.FilePond | null;
-    extraData: Record<string, unknown>;
-    inputId?: string;
-    onUpdate?: () => void;
+    private galleryId: string;
+    private galleryName?: string;
+    private modalId?: string;
+    private modal?: Modal;
+    private uploader: filepond.FilePond | null;
+    private extraData: Record<string, unknown>;
+    private inputId?: string;
+    private onUpdate?: () => void;
+    private fallbackTemplate?: string;
 
-    constructor({
-        galleryId,
-        galleryName,
-        modalId,
-        extraData,
-        inputId,
-        onUpdate,
-    }: {
-        galleryId: string;
-        galleryName?: string;
-        modalId?: string;
-        extraData: Record<string, unknown>;
-        inputId?: string;
-        onUpdate?: () => void;
-    }) {
-        this.galleryId = galleryId;
-        this.galleryName = galleryName;
-        this.modalId = modalId;
+    constructor(props: Props) {
+        this.galleryId = props.galleryId;
+        this.galleryName = props.galleryName;
+        this.modalId = props.modalId;
         this.modal = this.modalId ? Modal.getOrCreateInstance(this.modalId) : undefined;
-        this.inputId = inputId;
-        this.onUpdate = onUpdate;
-        this.extraData = extraData;
+        this.inputId = props.inputId;
+        this.onUpdate = props.onUpdate;
+        this.extraData = props.extraData;
+        this.fallbackTemplate = props.fallbackTemplate;
 
         const fileInputElement = this.inputId ? document.querySelector(this.inputId) : undefined;
         this.uploader = fileInputElement
@@ -115,35 +138,36 @@ export class PhotoGalleryController {
                 cache: false,
                 dataType: "json",
                 data: queryParams,
-                success: (json) => {
+                // C'est pas tout à fait logique, mais la réponse est faite comme ça
+                success: (json: DataTableResponse<Photo>) => {
                     const galeriePhoto = /*html*/ `
-                <div class="d-flex flex-row justify-content-start align-items-start flex-wrap">
-                    <div class="rounded rounded-1">
-                        ${json.data
-                            .map((photo: Photo) => {
-                                return /*html*/ `
-                                    <a
-                                        data-id="${photo.id}"
-                                        data-fancybox="${this.galleryName ?? "gallery"}"
-                                        data-src="/${photo.dir}${photo.photo}"
-                                        id="${this.galleryName ? `${this.galleryName}-` : ""}photo-${photo.id}"
-                                        data-responsive="${photo.dir}${photo.photo}"
-                                        href="/${photo.dir}${photo.photo}">
-                                        <img
-                                            data-id="${photo.id}"
-                                            class="mx-2 my-2"
-                                            width="${options?.imageSize ?? 80}px"
-                                            height="${options?.imageSize ?? 80}px;"
-                                            src="/${photo.dir}thumb.small.${photo.photo}"
-                                            ${options?.useFullImageAsFallback ? `onerror="this.onerror=null;this.src='/${photo.dir}${photo.photo}'"` : ""}
-                                        >
-                                    </a>`;
-                            })
-                            .join("")}
-                    </div>
-                </div>`;
+                        <div class="d-flex flex-row justify-content-start align-items-start flex-wrap">
+                            <div class="rounded rounded-1">
+                                ${json.data
+                                    .map((photo) => {
+                                        return /*html*/ `
+                                            <a
+                                                data-id="${photo.id}"
+                                                data-fancybox="${this.galleryName ?? "gallery"}"
+                                                data-src="/${photo.dir}${photo.photo}"
+                                                id="${this.galleryName ? `${this.galleryName}-` : ""}photo-${photo.id}"
+                                                data-responsive="${photo.dir}${photo.photo}"
+                                                href="/${photo.dir}${photo.photo}">
+                                                <img
+                                                    data-id="${photo.id}"
+                                                    class="mx-2 my-2"
+                                                    width="${options?.imageSize ?? 80}px"
+                                                    height="${options?.imageSize ?? 80}px;"
+                                                    src="/${photo.dir}thumb.small.${photo.photo}"
+                                                    ${options?.useFullImageAsFallback ? `onerror="this.onerror=null;this.src='/${photo.dir}${photo.photo}'"` : ""}
+                                                >
+                                            </a>`;
+                                    })
+                                    .join("")}
+                            </div>
+                        </div>`;
 
-                    $(`${this.galleryId}`).html(galeriePhoto);
+                    $(`${this.galleryId}`).html(json.data.length > 0 ? galeriePhoto : (this.fallbackTemplate ?? ""));
 
                     Fancybox.bind("[data-fancybox]", {
                         // Thumbs: {
