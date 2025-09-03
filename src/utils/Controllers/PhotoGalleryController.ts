@@ -10,6 +10,7 @@ import { getCsrfToken } from "../AuthUtils";
 export class PhotoGalleryController {
     // Controller logic for managing the photo gallery
     galleryId: string;
+    galleryName?: string;
     modalId?: string;
     modal?: Modal;
     uploader: filepond.FilePond | null;
@@ -19,18 +20,21 @@ export class PhotoGalleryController {
 
     constructor({
         galleryId,
+        galleryName,
         modalId,
         extraData,
         inputId,
         onUpdate,
     }: {
         galleryId: string;
+        galleryName?: string;
         modalId?: string;
         extraData: Record<string, unknown>;
         inputId?: string;
         onUpdate?: () => void;
     }) {
         this.galleryId = galleryId;
+        this.galleryName = galleryName;
         this.modalId = modalId;
         this.modal = this.modalId ? Modal.getOrCreateInstance(this.modalId) : undefined;
         this.inputId = inputId;
@@ -114,15 +118,15 @@ export class PhotoGalleryController {
                 success: (json) => {
                     const galeriePhoto = /*html*/ `
                 <div class="d-flex flex-row justify-content-start align-items-start flex-wrap">
-                    <div id="incidentPhotoList" class="rounded rounded-1">
+                    <div class="rounded rounded-1">
                         ${json.data
                             .map((photo: Photo) => {
                                 return /*html*/ `
                                     <a
                                         data-id="${photo.id}"
-                                        data-fancybox="gallery"
+                                        data-fancybox="${this.galleryName ?? "gallery"}"
                                         data-src="/${photo.dir}${photo.photo}"
-                                        id="bdt-photo-${photo.id}"
+                                        id="${this.galleryName ? `${this.galleryName}-` : ""}photo-${photo.id}"
                                         data-responsive="${photo.dir}${photo.photo}"
                                         href="/${photo.dir}${photo.photo}">
                                         <img
