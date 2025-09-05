@@ -151,6 +151,13 @@ export abstract class BaseController<T> {
                         case "datetime-local":
                             fieldElement.val(dayjs.utc(value as string).format("YYYY-MM-DD HH:mm"));
                             break;
+                        case "hidden":
+                            if (this.form.find(`[name="${field}"][type="checkbox"]`).length > 0) {
+                                fieldElement.val("0");
+                            } else {
+                                fieldElement.val(value as string);
+                            }
+                            break;
                         default:
                             fieldElement.val(value as string);
                     }
